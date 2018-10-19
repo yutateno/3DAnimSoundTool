@@ -1,4 +1,5 @@
 #include "InputMouse.hpp"
+#include "Character.hpp"
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -30,14 +31,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	int mouseX, mouseY;
 
+	Character* p_character = NULL;
+	p_character = new Character();
+
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && !MouseData::GetClick(2))
 	{
 		MouseData::Mouse_UpDate();
 		MouseWheelData::MouseWheel_Update();
 		GetMousePoint(&mouseX, &mouseY);
 
-
+		p_character->Draw();
+		p_character->Process();
 	}
+
+	delete p_character;
+	p_character = NULL;
 
 	DxLib_End();
 
