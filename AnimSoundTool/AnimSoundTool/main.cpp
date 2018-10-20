@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "PlayTool.hpp"
 
-int main(int args, char* argc)
+int main(int argc, char* argv[])
 {
 	bool consoleFlag = true;
 	PlayTool* playTool = NULL;
@@ -22,13 +22,11 @@ int main(int args, char* argc)
 		switch (toolFlag)
 		{
 		case 0:
-			printf("test\n");
 			playTool->Process(static_cast<TOOLSELECT>(toolFlag));
 			break;
 
 
 		case 1:
-			printf("test\n");
 			playTool->Process(static_cast<TOOLSELECT>(toolFlag));
 			break;
 
