@@ -4,6 +4,8 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	SetOutApplicationLogValidFlag(FALSE);   // ƒƒOo—Í‚ðs‚í‚È‚¢
+
 	SetWindowText("AnimationTool");
 
 	SetBackgroundColor(100, 100, 100);
@@ -28,17 +30,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetMouseDispFlag(TRUE);
 
 	SetDrawScreen(DX_SCREEN_BACK);
-
-	int mouseX, mouseY;
-
+	
 	Character* p_character = NULL;
-	p_character = new Character();
+	p_character = new Character("model\\CLPH_motionALL.mv1");
 
-	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && !MouseData::GetClick(2))
+	SetFontSize(20);
+
+	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0 && !MouseData::GetClick(2) && KeyData::CheckEnd())
 	{
 		MouseData::Mouse_UpDate();
 		MouseWheelData::MouseWheel_Update();
-		GetMousePoint(&mouseX, &mouseY);
+		KeyData::UpDate();
 
 		p_character->Draw();
 		p_character->Process();

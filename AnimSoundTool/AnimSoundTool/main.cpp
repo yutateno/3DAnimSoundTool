@@ -22,10 +22,12 @@ int main(int args, char* argc)
 		switch (toolFlag)
 		{
 		case 0:
+			printf("test\n");
 			playTool->Process(static_cast<TOOLSELECT>(toolFlag));
 			break;
 
 		case 1:
+			printf("test\n");
 			playTool->Process(static_cast<TOOLSELECT>(toolFlag));
 			break;
 

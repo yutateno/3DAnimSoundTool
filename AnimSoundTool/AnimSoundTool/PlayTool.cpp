@@ -53,7 +53,6 @@ void PlayTool::Process(TOOLSELECT tool)
 		break;
 	}
 
-
 	// ƒQ[ƒ€‚ğ‹N“®
 	result = CreateProcess(
 		NULL,
