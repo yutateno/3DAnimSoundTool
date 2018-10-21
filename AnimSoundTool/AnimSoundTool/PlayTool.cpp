@@ -35,8 +35,6 @@ void PlayTool::Process(TOOLSELECT tool)
 	gamePath.operator+= (drive);
 	gamePath.operator+= (dir);
 	gamePath.operator+= ("\\");
-	gamePath.operator+= ("game");
-	gamePath.operator+= ("\\");
 
 	direPath = gamePath;
 

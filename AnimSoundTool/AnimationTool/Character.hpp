@@ -33,6 +33,8 @@ private:
 
 	float preAnimSpeed;
 
+	bool noEnd;
+
 
 public:
 	Character(std::string fileName);
@@ -40,5 +42,7 @@ public:
 
 	void Draw();
 	void Process();
+
+	bool GetNoEnd();
 };
 

@@ -130,7 +130,9 @@ Character::Character(std::string fileName)
 
 	GetMousePoint(&mouseX, &mouseY);
 
-	inputHandle = MakeKeyInput(10, FALSE, TRUE, TRUE);      // 全角文字入力ハンドル
+	inputHandle = MakeKeyInput(10, FALSE, TRUE, TRUE);      // 半角英数字入力ハンドル
+
+	noEnd = true;
 }
 
 
@@ -186,7 +188,16 @@ void Character::Draw()
 		DrawKeyInputString(1050, 70, inputHandle);   // 入力途中の文字列を描画
 	}
 
+	
+	// モーションストップ項目
 	DrawFormatString(20, 600, GetColor(255, 255, 255), "スペースキーでモーションストップ");
+
+
+	// モデル弄り終了
+	DrawBox(1200, 700, 1250, 750, GetColor(255, 0, 0), true);
+	DrawBox(1200, 700, 1250, 750, GetColor(125, 125, 125), false);
+	DrawCircle(1225, 725, 10, GetColor(0, 0, 0), false);
+	DrawLine(1225, 710, 1225, 720, GetColor(0, 0, 0));
 }
 
 void Character::Process()
@@ -248,6 +259,17 @@ void Character::Process()
 		angleY += ROTATE_SPEED;
 	}
 
+	if (mouseX >= 1200 && mouseX <= 1250 && mouseY >= 700 && mouseY <= 750
+		&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) == 1)
+	{
+		noEnd = false;
+	}
+
 	//第二引数の回転角度をセット
 	MV1SetRotationXYZ(modelHandle, VGet(0.0f, angleY, 0.0f));
+}
+
+bool Character::GetNoEnd()
+{
+	return noEnd;
 }
