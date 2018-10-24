@@ -1,8 +1,14 @@
 #include "InputMouse.hpp"
 #include "Character.hpp"
 
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <sstream>
+
 #define _POINTER_RELEASE(p) {if(p!=NULL){delete p; p=NULL;}}
 
+inline void SaveData();
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -95,4 +101,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DxLib_End();
 
 	return 0;
+}
+
+inline void SaveData()
+{
+	std::ofstream saveFile;
+	saveFile.open("Save.csv");		// ファイルオープン
+
+	if (saveFile.fail()) {	// ファイル読み込み失敗
+		DrawFormatString(0, 0, GetColor(0, 0, 0), "SaveError");
+	}
+	else {
+		// 読み込み成功
+		saveFile << "番号" << "," << "X" << "," << "Y" << "," << "Z";
+		saveFile << std::endl;
+		/*for (int i = 0, n = static_cast<int>(t_v_model.size()); i < n; i++) {
+			saveFile << i << "," << t_v_model[i]->GetArea().x << "," << t_v_model[i]->GetArea().y << "," << t_v_model[i]->GetArea().z;
+			saveFile << std::endl;
+		}*/
+	}
+
+	// ファイルを閉じる
+	saveFile.close();
 }

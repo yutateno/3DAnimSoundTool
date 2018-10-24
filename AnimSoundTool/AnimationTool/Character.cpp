@@ -57,7 +57,7 @@ void Character::Player_AnimProcess()
 		totalTime = MV1GetAttachAnimTotalTime(modelHandle, attachMotion);
 
 		// 再生時間を進める
-		nowPlayTime += animSpeed;
+		nowPlayTime += animSpeed[attachNum];
 
 
 		// 再生時間が総時間に到達していたらループさせる
@@ -80,7 +80,7 @@ void Character::Player_AnimProcess()
 		totalTime = MV1GetAttachAnimTotalTime(modelHandle, preAttach);
 
 		// 再生時間を進める
-		preMotionPlayTime += animSpeed;
+		preMotionPlayTime += animSpeed[preAttach];
 
 		// 再生時間が総時間に到達していたら再生時間をループさせる
 		if (preMotionPlayTime > totalTime)
@@ -119,14 +119,19 @@ Character::Character(std::string fileName)
 
 	angleY = 0.0f;
 
-	animSpeed = 0.3f;
-	preAnimSpeed = animSpeed;
 	nowPlayTime = 0.0f;
 	motionBlendTime = 0.0f;
 	preAttach = -1;
 	preMotionPlayTime = 0.0f;
 
 	animNum = MV1GetAnimNum(modelHandle);
+
+	animSpeed.resize(animNum);
+	for (int i = 0; i != animSpeed.size(); ++i)
+	{
+		animSpeed[i] = 0.3f;
+	}
+	preAnimSpeed = animSpeed[attachNum];
 
 	GetMousePoint(&mouseX, &mouseY);
 
@@ -170,9 +175,11 @@ void Character::Draw()
 	// モーション速度の確認
 	DrawBox(1050, 38, 1050 + 200, 62, GetColor(255, 255, 255), true);
 	DrawBox(1050, 38, 1050 + 200, 62, GetColor(0, 255, 255), false);
-	if (animSpeed != 0.0f)
+	if (animSpeed[attachNum] != 0.0f)
 	{
-		DrawFormatString(1050, 38, GetColor(0, 0, 0), "Speed : %f", animSpeed);
+		DrawFormatString(1050, 38, GetColor(0, 0, 0), "Speed : %f", animSpeed[0]);
+		DrawFormatString(1050, 100, GetColor(0, 0, 0), "Speed : %f", animSpeed[1]);
+		DrawFormatString(1050, 140, GetColor(0, 0, 0), "Speed : %f", animSpeed[2]);
 	}
 	else
 	{
@@ -221,19 +228,19 @@ void Character::Process()
 
 	if (CheckKeyInput(inputHandle) == 1)
 	{
-		animSpeed = GetKeyInputNumberToFloat(inputHandle);   // 入力途中の文字列を描画
+		animSpeed[attachNum] = GetKeyInputNumberToFloat(inputHandle);   // 入力途中の文字列を描画
 	}
 
 	if (KeyData::Get(KEY_INPUT_SPACE) == 1)
 	{
-		if (animSpeed != 0.0f)
+		if (animSpeed[attachNum] != 0.0f)
 		{
-			preAnimSpeed = animSpeed;
-			animSpeed = 0.0f;
+			preAnimSpeed = animSpeed[attachNum];
+			animSpeed[attachNum] = 0.0f;
 		}
 		else
 		{
-			animSpeed = preAnimSpeed;
+			animSpeed[attachNum] = preAnimSpeed;
 		}
 	}
 
