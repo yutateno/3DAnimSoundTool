@@ -105,8 +105,10 @@ Character::Character(std::string fileName)
 	//奥行0.1～1000までをカメラの描画範囲とする
 	SetCameraNearFar(1.0f, 1000.0f);
 
+	area = VGet(0, 170, -200);
+
 	//(0,10,-20)の視点から(0,10,0)のターゲットを見る角度にカメラを設置
-	SetCameraPositionAndTarget_UpVecY(VGet(0, 170, -200), VGet(0.0f, 120.0f, 0.0f));
+	SetCameraPositionAndTarget_UpVecY(area, VGet(0.0f, 120.0f, 0.0f));
 
 	attachNum = 1;
 
@@ -276,6 +278,19 @@ void Character::Process()
 		angleY += ROTATE_SPEED;
 	}
 
+	// めんどくさいけど欲しいからちょっと適当に
+	if (KeyData::Get(KEY_INPUT_UP) > 0)
+	{
+		area.x += 10.0f;
+		area.z += 10.0f;
+	}
+
+	if (KeyData::Get(KEY_INPUT_DOWN) > 0)
+	{
+		area.x -= 10.0f;
+		area.z -= 10.0f;
+	}
+
 	if (mouseX >= 1200 && mouseX <= 1250 && mouseY >= 700 && mouseY <= 750
 		&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) == 1)
 	{
@@ -284,6 +299,9 @@ void Character::Process()
 
 	//第二引数の回転角度をセット
 	MV1SetRotationXYZ(modelHandle, VGet(0.0f, angleY, 0.0f));
+
+	//(0,10,-20)の視点から(0,10,0)のターゲットを見る角度にカメラを設置
+	SetCameraPositionAndTarget_UpVecY(area, VGet(0.0f, 120.0f, 0.0f));
 }
 
 bool Character::GetNoEnd()

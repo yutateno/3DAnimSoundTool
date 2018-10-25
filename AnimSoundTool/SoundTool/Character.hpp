@@ -37,6 +37,8 @@ private:
 
 	std::vector<float> animSpeed;								// アニメーションのスピード
 
+	VECTOR area;
+
 
 public:
 	Character(std::string fileName);
