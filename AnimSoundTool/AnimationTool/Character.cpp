@@ -80,7 +80,7 @@ void Character::Player_AnimProcess()
 		totalTime = MV1GetAttachAnimTotalTime(modelHandle, preAttach);
 
 		// 再生時間を進める
-		preMotionPlayTime += animSpeed[preAttach];
+		preMotionPlayTime += 0.3f;
 
 		// 再生時間が総時間に到達していたら再生時間をループさせる
 		if (preMotionPlayTime > totalTime)
@@ -135,7 +135,12 @@ Character::Character(std::string fileName)
 
 	GetMousePoint(&mouseX, &mouseY);
 
-	inputHandle = MakeKeyInput(10, FALSE, TRUE, TRUE);      // 半角英数字入力ハンドル
+	
+	inputHandle.resize(animNum);
+	for (int i = 0; i != inputHandle.size(); ++i)
+	{
+		inputHandle[i] = MakeKeyInput(10, FALSE, TRUE, TRUE);      // 半角英数字入力ハンドル
+	}
 
 	noEnd = true;
 }
@@ -143,6 +148,13 @@ Character::Character(std::string fileName)
 
 Character::~Character()
 {
+	for (int i = 0; i != inputHandle.size(); ++i)
+	{
+		DeleteKeyInput(inputHandle[i]);
+	}
+	inputHandle.clear();
+	inputHandle.shrink_to_fit();
+
 	MV1DeleteModel(modelHandle);
 }
 
@@ -177,9 +189,7 @@ void Character::Draw()
 	DrawBox(1050, 38, 1050 + 200, 62, GetColor(0, 255, 255), false);
 	if (animSpeed[attachNum] != 0.0f)
 	{
-		DrawFormatString(1050, 38, GetColor(0, 0, 0), "Speed : %f", animSpeed[0]);
-		DrawFormatString(1050, 100, GetColor(0, 0, 0), "Speed : %f", animSpeed[1]);
-		DrawFormatString(1050, 140, GetColor(0, 0, 0), "Speed : %f", animSpeed[2]);
+		DrawFormatString(1050, 38, GetColor(0, 0, 0), "Speed : %f", animSpeed[attachNum]);
 	}
 	else
 	{
@@ -190,9 +200,9 @@ void Character::Draw()
 	// モーション速度の変更
 	DrawBox(1050, 70, 1050 + 200, 94, GetColor(0, 0, 0), true);
 	DrawBox(1050, 70, 1050 + 200, 94, GetColor(0, 255, 255), false);
-	if (CheckKeyInput(inputHandle) == 0)
+	if (CheckKeyInput(inputHandle[attachNum]) == 0)
 	{
-		DrawKeyInputString(1050, 70, inputHandle);   // 入力途中の文字列を描画
+		DrawKeyInputString(1050, 70, inputHandle[attachNum]);   // 入力途中の文字列を描画
 	}
 
 	
@@ -223,12 +233,12 @@ void Character::Process()
 	if (mouseX >= 1050 && mouseX <= 1050 + 200 && mouseY > 70 && mouseY < 94
 		&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) == 1)
 	{
-		SetActiveKeyInput(inputHandle);   // 入力ハンドルをアクティブに
+		SetActiveKeyInput(inputHandle[attachNum]);   // 入力ハンドルをアクティブに
 	}
 
-	if (CheckKeyInput(inputHandle) == 1)
+	if (CheckKeyInput(inputHandle[attachNum]) == 1)
 	{
-		animSpeed[attachNum] = GetKeyInputNumberToFloat(inputHandle);   // 入力途中の文字列を描画
+		animSpeed[attachNum] = GetKeyInputNumberToFloat(inputHandle[attachNum]);   // 入力途中の文字列を描画
 	}
 
 	if (KeyData::Get(KEY_INPUT_SPACE) == 1)

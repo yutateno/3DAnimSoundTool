@@ -29,7 +29,7 @@ private:
 
 	int mouseX, mouseY;
 
-	int inputHandle;
+	std::vector<int> inputHandle;
 
 	float preAnimSpeed;
 
