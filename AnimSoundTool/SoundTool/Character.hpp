@@ -34,7 +34,7 @@ private:
 	float preAnimSpeed;
 
 	bool noEnd;
-	
+
 	std::vector<float> animSpeed;								// アニメーションのスピード
 
 

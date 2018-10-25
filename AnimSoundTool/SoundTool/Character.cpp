@@ -135,7 +135,7 @@ Character::Character(std::string fileName)
 
 	GetMousePoint(&mouseX, &mouseY);
 
-	
+
 	inputHandle.resize(animNum);
 	for (int i = 0; i != inputHandle.size(); ++i)
 	{
@@ -177,7 +177,7 @@ void Character::Draw()
 		}
 	}
 
-	
+
 	// モーションの動きのバー
 	DrawLine(300, 50, 980, 50, GetColor(255, 255, 255));
 	DrawBox(290 + static_cast<int>((nowPlayTime / MV1GetAttachAnimTotalTime(modelHandle, attachMotion)) * 680)
@@ -205,7 +205,7 @@ void Character::Draw()
 		DrawKeyInputString(1050, 70, inputHandle[attachNum]);   // 入力途中の文字列を描画
 	}
 
-	
+
 	// モーションストップ項目
 	DrawFormatString(20, 600, GetColor(255, 255, 255), "スペースキーでモーションストップ");
 

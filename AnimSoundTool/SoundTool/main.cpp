@@ -67,7 +67,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			p_mainCharacter->Draw();
 			p_mainCharacter->Process();
-			
+
 			// ƒ‚ƒfƒ‹˜M‚èI—¹
 			DrawBox(12, 700, 62, 750, GetColor(0, 255, 255), true);
 			DrawBox(12, 700, 62, 750, GetColor(125, 125, 125), false);
