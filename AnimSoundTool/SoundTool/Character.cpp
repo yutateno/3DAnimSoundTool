@@ -97,7 +97,53 @@ void Character::Player_AnimProcess()
 }
 
 
-Character::Character(std::string fileName)
+void Character::SoundProcess()
+{
+	for (int i = 0; i != soundNum; ++i)
+	{
+		if (mouseX > 200 && mouseX < 400 && mouseY > i * 24 && mouseY < i * 24 + 24
+			&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) == 1)
+		{
+			soundNumber[attachNum] = i;
+		}
+	}
+
+	int tempA = static_cast<int>(nowPlayTime);				// ここ妥協。後日要修正。
+	int tempB = static_cast<int>(soundArea[attachNum]);		// ここ妥協。後日要修正。
+
+	if (soundNumber[attachNum] != -1 && tempA == tempB && animSpeed[attachNum] != 0.0f)
+	{
+		PlaySoundMem(soundPlay[soundNumber[attachNum]], DX_PLAYTYPE_BACK, true);
+	}
+}
+
+void Character::SoundDraw()
+{
+	// モーション番号と名前
+	for (int i = 0; i != soundNum; ++i)
+	{
+		DrawBox(200, i * 24, 400, i * 24 + 24, GetColor(255, 255, 255), true);
+		DrawBox(200, i * 24, 400, i * 24 + 24, GetColor(0, 255, 255), false);
+		DrawFormatString(208, i * 24, GetColor(0, 0, 0), "%d : %s", i, soundName[i].c_str());
+		if (mouseX > 200 && mouseX < 400 && mouseY > i * 24 && mouseY < i * 24 + 24)
+		{
+			DrawBox(200, i * 24, 400, i * 24 + 24, GetColor(255, 0, 0), false);
+			DrawFormatString(208, i * 24, GetColor(125, 125, 125), "%d : %s", i, soundName[i].c_str());
+		}
+	}
+	DrawBox(200, (soundNum + 1) * 24, 400, (soundNum + 1) * 24 + 24, GetColor(255, 255, 255), true);
+	DrawBox(200, (soundNum + 1) * 24, 400, (soundNum + 1) * 24 + 24, GetColor(0, 255, 255), false);
+	if (soundNumber[attachNum] == -1)
+	{
+		DrawFormatString(208, (soundNum + 1) * 24, GetColor(0, 0, 0), "NONE");
+	}
+	else
+	{
+		DrawFormatString(208, (soundNum + 1) * 24, GetColor(0, 0, 0), "Now : %s", soundName[soundNumber[attachNum]].c_str());
+	}
+}
+
+Character::Character(std::string fileName, int soundNum)
 {
 	// ３Ｄモデルの読み込み
 	modelHandle = MV1LoadModel(fileName.c_str());
@@ -141,7 +187,34 @@ Character::Character(std::string fileName)
 	inputHandle.resize(animNum);
 	for (int i = 0; i != inputHandle.size(); ++i)
 	{
-		inputHandle[i] = MakeKeyInput(10, FALSE, TRUE, TRUE);      // 半角英数字入力ハンドル
+		inputHandle[i] = MakeKeyInput(5, FALSE, TRUE, TRUE);      // 半角英数字入力ハンドル
+	}
+
+	
+	soundArea.resize(animNum);
+	for (int i = 0; i != soundArea.size(); ++i)
+	{
+		soundArea[i] = 0.0f;
+	}
+
+	this->soundNum = soundNum;
+
+	soundPlay.resize(soundNum);
+	for (int i = 0; i != soundNum; ++i)
+	{
+		soundPlay[i] = -1;
+	}
+
+	soundNumber.resize(animNum);
+	for (int i = 0; i != animNum; ++i)
+	{
+		soundNumber[i] = -1;
+	}
+
+	soundName.resize(soundNum);
+	for (int i = 0; i != soundNum; ++i)
+	{
+		soundName[i] = "";
 	}
 
 	noEnd = true;
@@ -157,6 +230,21 @@ Character::~Character()
 	inputHandle.clear();
 	inputHandle.shrink_to_fit();
 
+	animSpeed.clear();
+	animSpeed.shrink_to_fit();
+
+	soundArea.clear();
+	soundArea.shrink_to_fit();
+
+	soundPlay.clear();
+	soundPlay.shrink_to_fit();
+
+	soundNumber.clear();
+	soundNumber.shrink_to_fit();
+
+	soundName.clear();
+	soundName.shrink_to_fit();
+
 	MV1DeleteModel(modelHandle);
 }
 
@@ -165,6 +253,7 @@ void Character::Draw()
 	// ３Ｄモデルの描画
 	MV1DrawModel(modelHandle);
 
+	SoundDraw();
 
 	// モーション番号と名前
 	for (int i = 0; i != animNum; ++i)
@@ -172,7 +261,7 @@ void Character::Draw()
 		DrawBox(0, i * 24, 200, i * 24 + 24, GetColor(255, 255, 255), true);
 		DrawBox(0, i * 24, 200, i * 24 + 24, GetColor(0, 255, 255), false);
 		DrawFormatString(8, i * 24, GetColor(0, 0, 0), "%d : %s", i, MV1GetAnimName(modelHandle, i));
-		if (mouseX >= 0 && mouseX <= 200 && mouseY > i * 24 && mouseY < i * 24 + 24)
+		if (mouseX > 0 && mouseX < 200 && mouseY > i * 24 && mouseY < i * 24 + 24)
 		{
 			DrawBox(0, i * 24, 200, i * 24 + 24, GetColor(255, 0, 0), false);
 			DrawFormatString(8, i * 24, GetColor(125, 125, 125), "%d : %s", i, MV1GetAnimName(modelHandle, i));
@@ -181,30 +270,29 @@ void Character::Draw()
 
 
 	// モーションの動きのバー
-	DrawLine(300, 50, 980, 50, GetColor(255, 255, 255));
-	DrawBox(290 + static_cast<int>((nowPlayTime / MV1GetAttachAnimTotalTime(modelHandle, attachMotion)) * 680)
-		, 30, 310 + static_cast<int>((nowPlayTime / MV1GetAttachAnimTotalTime(modelHandle, attachMotion)) * 680), 70, GetColor(0, 125, 125), true);
+	DrawLine(500, 50, 1180, 50, GetColor(255, 255, 255));
+	DrawBox(490 + static_cast<int>((nowPlayTime / MV1GetAttachAnimTotalTime(modelHandle, attachMotion)) * 680)
+		, 30, 510 + static_cast<int>((nowPlayTime / MV1GetAttachAnimTotalTime(modelHandle, attachMotion)) * 680), 70, GetColor(0, 125, 125), true);
 
 
 	// モーション速度の確認
-	DrawBox(1050, 38, 1050 + 200, 62, GetColor(255, 255, 255), true);
-	DrawBox(1050, 38, 1050 + 200, 62, GetColor(0, 255, 255), false);
-	if (animSpeed[attachNum] != 0.0f)
-	{
-		DrawFormatString(1050, 38, GetColor(0, 0, 0), "Speed : %f", animSpeed[attachNum]);
-	}
-	else
-	{
-		DrawFormatString(1050, 38, GetColor(0, 0, 0), "Speed : %f", preAnimSpeed);
-	}
+	DrawBox(540, 20, 540 + 200, 44, GetColor(255, 255, 255), true);
+	DrawBox(540, 20, 540 + 200, 44, GetColor(0, 255, 255), false);
+	DrawFormatString(540, 20, GetColor(0, 0, 0), "NowSpeed : %f", nowPlayTime);
+
+
+	// モーション速度の確認
+	DrawBox(1050, 138, 1050 + 200, 162, GetColor(255, 255, 255), true);
+	DrawBox(1050, 138, 1050 + 200, 162, GetColor(0, 255, 255), false);
+	DrawFormatString(1050, 138, GetColor(0, 0, 0), "SoundArea : %f", soundArea[attachNum]);
 
 
 	// モーション速度の変更
-	DrawBox(1050, 70, 1050 + 200, 94, GetColor(0, 0, 0), true);
-	DrawBox(1050, 70, 1050 + 200, 94, GetColor(0, 255, 255), false);
+	DrawBox(1050, 170, 1050 + 200, 194, GetColor(0, 0, 0), true);
+	DrawBox(1050, 170, 1050 + 200, 194, GetColor(0, 255, 255), false);
 	if (CheckKeyInput(inputHandle[attachNum]) == 0)
 	{
-		DrawKeyInputString(1050, 70, inputHandle[attachNum]);   // 入力途中の文字列を描画
+		DrawKeyInputString(1050, 170, inputHandle[attachNum]);   // 入力途中の文字列を描画
 	}
 
 
@@ -223,16 +311,18 @@ void Character::Process()
 {
 	GetMousePoint(&mouseX, &mouseY);
 
+	SoundProcess();
+
 	for (int i = 0; i != animNum; ++i)
 	{
-		if (mouseX >= 0 && mouseX <= 200 && mouseY > i * 24 && mouseY < i * 24 + 24
+		if (mouseX > 0 && mouseX < 200 && mouseY > i * 24 && mouseY < i * 24 + 24
 			&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) == 1)
 		{
 			Player_PlayAnim(i);
 		}
 	}
 
-	if (mouseX >= 1050 && mouseX <= 1050 + 200 && mouseY > 70 && mouseY < 94
+	if (mouseX >= 1050 && mouseX <= 1050 + 200 && mouseY > 170 && mouseY < 194
 		&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) == 1)
 	{
 		SetActiveKeyInput(inputHandle[attachNum]);   // 入力ハンドルをアクティブに
@@ -240,7 +330,7 @@ void Character::Process()
 
 	if (CheckKeyInput(inputHandle[attachNum]) == 1)
 	{
-		animSpeed[attachNum] = GetKeyInputNumberToFloat(inputHandle[attachNum]);   // 入力途中の文字列を描画
+		soundArea[attachNum] = GetKeyInputNumberToFloat(inputHandle[attachNum]);   // 入力途中の文字列を描画
 	}
 
 	if (KeyData::Get(KEY_INPUT_SPACE) == 1)
@@ -256,14 +346,10 @@ void Character::Process()
 		}
 	}
 
-	DrawLine(300, 50, 980, 50, GetColor(255, 255, 255));
-	DrawBox(290 + static_cast<int>((nowPlayTime / MV1GetAttachAnimTotalTime(modelHandle, attachMotion)) * 680)
-		, 30, 310 + static_cast<int>((nowPlayTime / MV1GetAttachAnimTotalTime(modelHandle, attachMotion)) * 680), 70, GetColor(0, 125, 125), true);
-
-	if (mouseX >= 300 && mouseX <= 980 && mouseY >= 20 && mouseY <= 80
+	if (mouseX >= 500 && mouseX <= 1180 && mouseY >= 20 && mouseY <= 80
 		&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) >= 1)
 	{
-		nowPlayTime = ((mouseX - 300) / 680.0f) * MV1GetAttachAnimTotalTime(modelHandle, attachMotion);
+		nowPlayTime = ((mouseX - 500) / 680.0f) * MV1GetAttachAnimTotalTime(modelHandle, attachMotion);
 	}
 
 	Player_AnimProcess();
@@ -309,7 +395,41 @@ bool Character::GetNoEnd()
 	return noEnd;
 }
 
-std::vector<float> Character::GetSpeed()
+void Character::SetSpeed(std::vector<float> speed)
 {
-	return animSpeed;
+	for (int i = 0; i != speed.size(); ++i)
+	{
+		animSpeed[i] = speed[i];
+	}
+}
+
+std::vector<float> Character::GetSoundArea()
+{
+	return soundArea;
+}
+
+void Character::SetSound(std::vector<int> sound)
+{
+	for (int i = 0; i != sound.size(); ++i)
+	{
+		soundPlay[i] = sound[i];
+	}
+}
+
+void Character::SetSoundName(std::vector<std::string> str)
+{
+	for (int i = 0; i != str.size(); ++i)
+	{
+		soundName[i] = str[i];
+	}
+}
+
+std::vector<int> Character::GetSoundNumber()
+{
+	return soundNumber;
+}
+
+std::vector<std::string> Character::GetSoundName()
+{
+	return soundName;
 }

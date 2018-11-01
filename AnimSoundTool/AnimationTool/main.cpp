@@ -166,7 +166,7 @@ inline void SaveData(std::string str, std::vector<float> speed)
 		// “Ç‚İ‚İ¬Œ÷
 		for (int i = 0; i != speed.size(); ++i)
 		{
-			saveFile << i << "," << speed[i];
+			saveFile << speed[i];
 			saveFile << std::endl;
 		}
 	}
@@ -190,7 +190,7 @@ inline void AutoSaveData(std::string str, std::vector<float> speed)
 		// “Ç‚İ‚İ¬Œ÷
 		for (int i = 0; i != speed.size(); ++i)
 		{
-			saveFile << i << "," << speed[i];
+			saveFile << speed[i];
 			saveFile << std::endl;
 		}
 	}

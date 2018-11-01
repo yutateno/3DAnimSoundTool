@@ -39,9 +39,23 @@ private:
 
 	VECTOR area;
 
+	std::vector<float> soundArea;
+
+	void SoundProcess();
+
+	void SoundDraw();
+
+	std::vector<int> soundPlay;
+
+	std::vector<std::string> soundName;
+
+	int soundNum;
+
+	std::vector<int> soundNumber;
+
 
 public:
-	Character(std::string fileName);
+	Character(std::string fileName, int soundNum);
 	~Character();
 
 	void Draw();
@@ -49,6 +63,11 @@ public:
 
 	bool GetNoEnd();
 
-	std::vector<float> GetSpeed();
+	void SetSpeed(std::vector<float> speed);
+	std::vector<float> GetSoundArea();
+	void SetSound(std::vector<int> sound);
+	void SetSoundName(std::vector<std::string> str);
+	std::vector<int> GetSoundNumber();
+	std::vector<std::string> GetSoundName();
 };
 
