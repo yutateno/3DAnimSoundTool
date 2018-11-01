@@ -295,6 +295,10 @@ void Character::Draw()
 		DrawKeyInputString(1050, 170, inputHandle[attachNum]);   // 入力途中の文字列を描画
 	}
 
+	DrawBox(1100, 250, 1150, 300, GetColor(0, 255, 255), true);
+	DrawBox(1100, 250, 1150, 300, GetColor(125, 125, 125), false);
+	DrawFormatString(1100, 250, GetColor(0, 0, 0), "SET");
+
 
 	// モーションストップ項目
 	DrawFormatString(20, 600, GetColor(255, 255, 255), "スペースキーでモーションストップ");
@@ -331,6 +335,13 @@ void Character::Process()
 	if (CheckKeyInput(inputHandle[attachNum]) == 1)
 	{
 		soundArea[attachNum] = GetKeyInputNumberToFloat(inputHandle[attachNum]);   // 入力途中の文字列を描画
+	}
+
+	if (mouseX >= 1100 && mouseX <= 1150 && mouseY > 250 && mouseY < 300
+		&& MouseData::GetClick(static_cast<int>(CLICK::LEFT)) == 1)
+	{
+		SetKeyInputNumberToFloat(nowPlayTime, inputHandle[attachNum]);
+		soundArea[attachNum] = nowPlayTime;
 	}
 
 	if (KeyData::Get(KEY_INPUT_SPACE) == 1)
