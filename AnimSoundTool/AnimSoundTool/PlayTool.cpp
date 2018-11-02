@@ -41,12 +41,12 @@ void PlayTool::Process(TOOLSELECT tool)
 	switch (tool)
 	{
 	case TOOLSELECT::graphic:
-		gamePath.operator+= ("AnimationTool");
+		gamePath.operator+= ("Tool\\AnimationTool");
 		gamePath.operator+= (".exe");
 		break;
 
 	case TOOLSELECT::sound:
-		gamePath.operator+= ("SoundTool");
+		gamePath.operator+= ("Tool\\SoundTool");
 		gamePath.operator+= (".exe");
 		break;
 	}
